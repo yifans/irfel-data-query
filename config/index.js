@@ -3,6 +3,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const aa_host = 'http://192.168.121.1'
 
 module.exports = {
   dev: {
@@ -10,7 +11,22 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/retrieval' : {
+        target: aa_host + ':17668/retrieval',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/retrieval' : ''
+        }
+      },
+      '/bpl': {
+        target: aa_host + ':17665/mgmt/bpl',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/bpl': ''
+        }
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

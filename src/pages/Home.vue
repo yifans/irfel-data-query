@@ -3,15 +3,17 @@
     <el-container>
       <el-header class="el-header">
         IRFEL Data Query
-        <br/>
-        <router-link to='/status'>Operation Status</router-link>
-        <router-link to='/historical'>Historical Data</router-link>
-        <router-link to='/analysis'>Data Analysis</router-link>
-        <router-link to='/alarm'>Alarm</router-link>
-        <router-link to='/help'>Help</router-link>
+        <el-menu  mode="horizontal" router="true">
+          <el-menu-item route='/status'>Operation Status</el-menu-item>
+          <el-menu-item route='/historical'>Historical Data</el-menu-item>
+          <el-menu-item route='/analysis'>Data Analysis</el-menu-item>
+          <el-menu-item route='/alarm'>Alarm</el-menu-item>
+          <el-menu-item route='/help'>Help</el-menu-item>
+        </el-menu>
       </el-header>
       <el-main class="el-main">
-        this is the main part
+        <br/>
+        <br/>
         <router-view></router-view>
       </el-main>
       <el-footer class="el-footer">
@@ -23,7 +25,11 @@
 
 <script>
 export default {
-  name: 'Home'
+  name: 'Home',
+  data: function () {
+    return {
+    }
+  }
 }
 </script>
 

@@ -1,7 +1,6 @@
 <template>
   <div class="status">
     status
-     <el-button >Button</el-button>
   </div>
 </template>
 
