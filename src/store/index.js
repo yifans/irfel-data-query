@@ -17,6 +17,9 @@ const mutations = {
   setSelectedPVs (state, payload) {
     state.selectedPVs = payload.pvs
   },
+  setTimeRange (state, payload) {
+    state.timeRange = payload.timeRange
+  },
   setHistoricalData (state, payload) {
     state.historicalData = payload.data
   }
@@ -25,21 +28,46 @@ const mutations = {
 const actions = {
   getAllPVs (context) {
     var url = '/bpl/getAllPVs'
-    Vue.http.get(url).then(response => {
-      console.log(response)
-      context.commit({
-        type: 'setAllPVs',
-        pvs: response.body
-      })
-    }, response => {
-
+    Vue.axios.get(url, {
+      params: {
+        limit: -1
+      }
     })
+      .then(response => {
+        context.commit({
+          type: 'setAllPVs',
+          pvs: response.data
+        })
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
+  getHistoricalData (context) {
+    let url = '/retrieval/data/getData.qw?'
+    let from = context.state.timeRange[0].toISOString()
+    let to = context.state.timeRange[1].toISOString()
+    var promiseArray = context.state.selectedPVs
+      .map(pv => Vue.axios.get(url, {params: {pv, from, to}}))
+    // console.log(context.state.selectedPVs.map(pv => url + '?pv=' + pv + '&from=' + from + '&to=' + to))
+    Vue.axios.all(promiseArray)
+      .then(function (result) {
+        console.log(result)
+        context.commit({
+          type: 'setHistoricalData',
+          data: result.map(resultItem => resultItem.data[0])
+        })
+      })
+      .catch(function (error) {
+        console.log('error', error)
+      })
   }
 }
 
 const getters = {
   allPVs: state => state.allPVs,
   selectedPVs: state => state.selectedPVs,
+  historicalData: state => state.historicalData,
   pvTree: function (state) {
     var allPVs = state.allPVs
     var tree = {
@@ -48,7 +76,7 @@ const getters = {
     }
     for (let pvIndex in allPVs) {
       var pointer = tree
-      let pvNameString = allPVs[pvIndex].split(':')
+      let pvNameString = allPVs[pvIndex].split(/[:_-]/)
       for (let i in pvNameString) {
         let flag = false
         for (let j in pointer['children']) {

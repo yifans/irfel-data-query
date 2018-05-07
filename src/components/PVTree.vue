@@ -1,7 +1,6 @@
 <template>
-  <div class="hello">
+  <div class="tree">
     <el-tree ref='pvtree' :data="pvTree" show-checkbox @check="checkNode"></el-tree>
-    {{selectedPVs}}
   </div>
 </template>
 

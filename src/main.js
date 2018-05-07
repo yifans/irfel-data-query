@@ -7,11 +7,18 @@ import store from './store'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
-import VueResource from 'vue-resource'
-Vue.use(VueResource)
+import VueHighcharts from 'vue-highcharts'
+import Highcharts from 'highcharts'
+import loadStock from 'highcharts/modules/stock'
 
+loadStock(Highcharts)
+
+Vue.use(VueAxios, axios)
 Vue.use(ElementUI)
+Vue.use(VueHighcharts, { Highcharts })
 
 Vue.config.productionTip = false
 

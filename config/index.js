@@ -3,7 +3,8 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
-const aa_host = 'http://192.168.121.1'
+const aa_host = 'http://192.168.113.40'
+// const aa_host = 'http://192.168.121.1'
 
 module.exports = {
   dev: {
