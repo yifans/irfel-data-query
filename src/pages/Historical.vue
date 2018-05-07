@@ -48,7 +48,6 @@ export default {
       'getHistoricalData'
     ]),
     draw: function () {
-      console.log('draw')
       this.getHistoricalData()
     },
     statistics: function () {

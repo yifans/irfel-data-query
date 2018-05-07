@@ -2,7 +2,7 @@
   <div class="home">
     <el-container>
       <el-header class="el-header">
-        IRFEL Data Query
+        <h1 style="text-align:center">HLS-II Data Query</h1>
         <el-menu  mode="horizontal" :router=true>
           <el-menu-item index='status' route='/status'>Operation Status</el-menu-item>
           <el-menu-item index='historical' route='/historical'>Historical Data</el-menu-item>
