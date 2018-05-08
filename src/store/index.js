@@ -7,7 +7,8 @@ const state = {
   allPVs: [],
   selectedPVs: [],
   timeRange: [],
-  historicalData: []
+  historicalData: [],
+  dialogTableVisible: false
 }
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
   },
   setHistoricalData (state, payload) {
     state.historicalData = payload.data
+  },
+  setDialogTableVisible (state, payload) {
+    state.dialogTableVisible = payload.visible
   }
 }
 

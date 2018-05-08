@@ -5,6 +5,7 @@
         <pv-tree></pv-tree>
       </el-col>
       <el-col :span="20">
+        <pv-dialog></pv-dialog>
         <el-row>
           <pv-chart></pv-chart>
         </el-row>
@@ -24,17 +25,24 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import PVTree from '../components/PVTree'
 import PVChart from '../components/PVChart'
 import DataPicker from '../components/DatePicker'
+import PVDialog from '../components/PVDialog'
 
 export default {
   name: 'Historical',
+  data () {
+    return {
+      dialogVisible: false
+    }
+  },
   components: {
     'pv-tree': PVTree,
     'data-picker': DataPicker,
-    'pv-chart': PVChart
+    'pv-chart': PVChart,
+    'pv-dialog': PVDialog
   },
   computed: {
     ...mapGetters([
@@ -47,6 +55,9 @@ export default {
       'getAllPVs',
       'getHistoricalData'
     ]),
+    ...mapMutations([
+      'setDialogTableVisible'
+    ]),
     draw: function () {
       this.getHistoricalData()
     },
@@ -55,9 +66,13 @@ export default {
     },
     view: function () {
       console.log('view data')
+      this.setDialogTableVisible({
+        visible: true
+      })
     },
     download: function () {
       console.log('download')
+      // window.open('www.baidu.com')
     }
   },
   mounted: function () {
