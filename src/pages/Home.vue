@@ -17,7 +17,6 @@
         <router-view></router-view>
       </el-main>
       <el-footer class="el-footer">
-        nsrl control group
       </el-footer>
     </el-container>
   </div>

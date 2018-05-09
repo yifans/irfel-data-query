@@ -14,7 +14,7 @@
         </el-row>
         <br>
         <el-row>
-          <!--<el-button type="primary" @click="draw">Draw Line Chart</el-button>-->
+          <el-button type="primary" @click="draw">Draw Line Chart</el-button>
           <el-button type="primary" @click="statistics">Statistics Data</el-button>
           <el-button type="primary" @click="view">View Data</el-button>
           <el-button type="primary" @click="download">Download Data</el-button>
@@ -68,6 +68,9 @@ export default {
     ...mapMutations([
       'setDialogTableVisible'
     ]),
+    draw: function () {
+      this.getHistoricalData()
+    },
     statistics: function () {
       console.log('statistics')
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="pvchart">
      <highstock :options="options"></highstock>
-    <br>
+    <!--<br>-->
     <!--{{historicalData}}-->
   </div>
 </template>
@@ -40,9 +40,6 @@ export default {
         rangeSelector: false,
         series: this.selectedPVs.map(function (pv) {
           return {
-            // name: dataItem.meta.name,
-            // data: dataItem.data.map(pvitem => [pvitem.millis, pvitem.val]),
-            // yAxis: dataItem.meta.name
             name: pv,
             yAxis: pv,
             data: rawData[pv].map(dataItem => [dataItem.millis, dataItem.val])
