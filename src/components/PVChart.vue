@@ -1,30 +1,36 @@
 <template>
   <div class="pvchart">
      <highstock :options="options"></highstock>
+    <br>
+    <!--{{historicalData}}-->
   </div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 export default {
   name: 'PVChart',
+  data: function () {
+    return {
+      options: {}
+    }
+  },
   computed: {
-    ...mapGetters([
+    // ...mapGetters([
+    //   'historicalData'
+    // ]),
+    ...mapState([
+      'selectedPVs',
       'historicalData'
-    ]),
-    options: function () {
+    ])
+  },
+  watch: {
+    historicalData: function () {
+      // if (JSON.stringify(this.historicalData) === '{}') return {}
       let rawData = this.historicalData
-      return {
+      let config = {
         chart: {
-          zoomType: 'xy',
-          resetZoomButton: {
-            position: {
-              // align: 'right', // by default
-              // verticalAlign: 'top', // by default
-              // x: 500,
-              // y: 500
-            }
-          }
+          zoomType: 'xy'
         },
         title: {
           text: ''
@@ -35,12 +41,14 @@ export default {
           href: 'http://www.nsrl.ustc.edu.cn'
         },
         rangeSelector: false,
-        series: rawData.map(function (dataItem) {
-          // console.log('dataitem', dataItem)
+        series: this.selectedPVs.map(function (pv) {
           return {
-            name: dataItem.meta.name,
-            data: dataItem.data.map(pvitem => [pvitem.millis, pvitem.val]),
-            yAxis: dataItem.meta.name
+            // name: dataItem.meta.name,
+            // data: dataItem.data.map(pvitem => [pvitem.millis, pvitem.val]),
+            // yAxis: dataItem.meta.name
+            name: pv,
+            yAxis: pv,
+            data: rawData[pv].map(dataItem => [dataItem.millis, dataItem.val])
           }
         }),
         legend: {
@@ -55,16 +63,17 @@ export default {
           },
           type: 'datetime'
         },
-        yAxis: rawData.map(function (dataItem) {
+        yAxis: this.selectedPVs.map(function (pv) {
           return {
-            id: dataItem.meta.name,
+            id: pv,
             opposite: false,
             title: {
-              text: dataItem.meta.name
+              text: pv
             }
           }
         })
       }
+      this.options = config
     }
   }
 }

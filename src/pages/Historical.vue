@@ -5,7 +5,7 @@
         <pv-tree></pv-tree>
       </el-col>
       <el-col :span="20">
-        <pv-dialog></pv-dialog>
+        <!--<pv-dialog></pv-dialog>-->
         <el-row>
           <pv-chart></pv-chart>
         </el-row>
@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import PVTree from '../components/PVTree'
 import PVChart from '../components/PVChart'
 import DataPicker from '../components/DatePicker'
-import PVDialog from '../components/PVDialog'
+// import PVDialog from '../components/PVDialog'
 
 export default {
   name: 'Historical',
@@ -41,14 +41,26 @@ export default {
   components: {
     'pv-tree': PVTree,
     'data-picker': DataPicker,
-    'pv-chart': PVChart,
-    'pv-dialog': PVDialog
+    'pv-chart': PVChart
+    // 'pv-dialog': PVDialog
   },
   computed: {
     ...mapGetters([
       'allPVs',
       'historicalData'
+    ]),
+    ...mapState([
+      'selectedPVs',
+      'timeRange'
     ])
+  },
+  watch: {
+    selectedPVs: function () {
+      this.getHistoricalData()
+    },
+    timeRange: function () {
+      this.getHistoricalData()
+    }
   },
   methods: {
     ...mapActions([
@@ -71,8 +83,15 @@ export default {
       })
     },
     download: function () {
-      console.log('download')
-      // window.open('www.baidu.com')
+      let urlHeader = '/retrieval/data/getData.csv?'
+      let from = this.timeRange[0].toISOString()
+      let to = this.timeRange[1].toISOString()
+      let urls = this.selectedPVs.map(function (pv) {
+        return urlHeader + 'pv=' + pv + '&from=' + from + '&to=' + to
+      })
+      for (let i in urls) {
+        window.open(urls[i])
+      }
     }
   },
   mounted: function () {

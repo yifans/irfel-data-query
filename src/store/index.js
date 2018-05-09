@@ -7,7 +7,10 @@ const state = {
   allPVs: [],
   selectedPVs: [],
   timeRange: [],
-  historicalData: [],
+  historicalData: {},
+  metaData: {},
+  queryFormat: 'qw',
+  downloadFormat: 'txt',
   dialogTableVisible: false
 }
 
@@ -23,6 +26,9 @@ const mutations = {
   },
   setHistoricalData (state, payload) {
     state.historicalData = payload.data
+  },
+  setMetaData (state, payload) {
+    state.metaData = payload.meta
   },
   setDialogTableVisible (state, payload) {
     state.dialogTableVisible = payload.visible
@@ -48,18 +54,28 @@ const actions = {
       })
   },
   getHistoricalData (context) {
-    let url = '/retrieval/data/getData.qw?'
-    let from = context.state.timeRange[0].toISOString()
-    let to = context.state.timeRange[1].toISOString()
-    var promiseArray = context.state.selectedPVs
-      .map(pv => Vue.axios.get(url, {params: {pv, from, to}}))
-    // console.log(context.state.selectedPVs.map(pv => url + '?pv=' + pv + '&from=' + from + '&to=' + to))
+    var promiseArray = context.getters.queryURLs
+      .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        console.log(result)
+        console.log('get', result)
+        let dataTmp = {}
+        let metaTmp = {}
+        result.map(function (resultItem) {
+          let pvName = resultItem.data[0].meta.name
+          let meta = resultItem.data[0].meta
+          let data = resultItem.data[0].data
+          dataTmp[pvName] = data
+          metaTmp[pvName] = meta
+          // console.log('item', pvName, meta, data)
+        })
         context.commit({
           type: 'setHistoricalData',
-          data: result.map(resultItem => resultItem.data[0])
+          data: dataTmp
+        })
+        context.commit({
+          type: 'setMetaData',
+          data: metaTmp
         })
       })
       .catch(function (error) {
@@ -71,6 +87,20 @@ const actions = {
 const getters = {
   allPVs: state => state.allPVs,
   selectedPVs: state => state.selectedPVs,
+  queryURLs: function (state) {
+    let urlHeader = '/retrieval/data/getData.' + state.queryFormat
+    let from = state.timeRange[0].toISOString()
+    let to = state.timeRange[1].toISOString()
+    let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
+    return urls
+  },
+  downloadURLs: function (state) {
+    let urlHeader = '/retrieval/data/getData.' + state.downloadFormat
+    let from = state.timeRange[0].toISOString()
+    let to = state.timeRange[1].toISOString()
+    let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
+    return urls
+  },
   historicalData: state => state.historicalData,
   pvTree: function (state) {
     var allPVs = state.allPVs

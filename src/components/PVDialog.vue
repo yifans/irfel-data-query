@@ -4,6 +4,7 @@
       <el-table :data="gridData">
         <el-table-column
           v-for="headerItem in tableHeader"
+          :key='headerItem'
           v-bind:property="headerItem"
           v-bind:label="headerItem"></el-table-column>
       </el-table>
