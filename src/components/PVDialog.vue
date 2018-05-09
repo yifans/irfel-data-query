@@ -3,10 +3,10 @@
     <el-dialog title="Historical Data" :visible.sync="dialogTableVisible" @close="onClose">
       <el-table :data="gridData">
         <el-table-column
-          v-for="headerItem in tableHeader"
-          :key='headerItem'
-          v-bind:property="headerItem"
-          v-bind:label="headerItem"></el-table-column>
+          v-for="pv in selectedPVs"
+          :key='pv'
+          v-bind:property="pv"
+          v-bind:label="pv"></el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -18,6 +18,7 @@ export default {
   name: 'PVDialog',
   computed: {
     ...mapState([
+      'selectedPVs',
       'dialogTableVisible',
       'historicalData'
     ]),
@@ -30,40 +31,6 @@ export default {
           visible: false
         })
       }
-    },
-    gridData: function () {
-      let rawData = this.historicalData
-      let rawDataCount = this.historicalData.length
-      // console.log('rawData', rawData)
-      // console.log('rawData count', rawDataCount)
-      let dataLength = rawData.map(dataItem => dataItem.data.length)
-      let dataLengthMax = Math.max(...dataLength)
-      // console.log('dataLengthMax', dataLengthMax)
-      // console.log('datalength', dataLength)
-      let gradData = []
-      for (let i = 0; i < dataLengthMax; i++) {
-        let obj = {}
-        for (let j = 0; j < rawDataCount; j++) {
-          if (rawData[j]['data'][i] === undefined) {
-            obj[rawData[j].meta.name] = ''
-            continue
-          }
-          let newDate = new Date()
-          newDate.setTime(rawData[j]['data'][i].millis)
-          let time = newDate.toISOString()
-          let value = rawData[j]['data'][i].val
-          let item = time + ' ' + value
-          obj[rawData[j].meta.name] = item
-        }
-        gradData.push(obj)
-      }
-      console.log('gradData', gradData)
-      return gradData
-    },
-    tableHeader: function () {
-      let rawData = this.historicalData
-      let tableHeader = rawData.map(dataItem => dataItem.meta.name)
-      return tableHeader
     }
   },
   methods: {
@@ -78,23 +45,37 @@ export default {
   },
   data () {
     return {
-      gridData1: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }]
+      gridData: []
+    }
+  },
+  watch: {
+    historicalData: function () {
+      console.log('historical Data', this.historicalData)
+      let rawData = this.historicalData
+      let pvs = this.selectedPVs
+      let dataLength = pvs.map(pv => rawData[pv].length)
+      let dataLengthMax = Math.max(...dataLength)
+      let gridData = []
+      for (let i = 0; i < dataLengthMax; i++) {
+        let obj = {}
+        for (let pvIndex in pvs) {
+          let pvName = pvs[pvIndex]
+          let item = rawData[pvName][i]
+          if (item === undefined) {
+            obj[pvName] = ''
+            continue
+          }
+          let newDate = new Date()
+          newDate.setTime(item.millis)
+          let time = newDate.toISOString()
+          let value = item.val
+          item = time + ' ' + value
+          obj[pvName] = item
+        }
+        gridData.push(obj)
+      }
+      console.log('grid after for each', gridData)
+      this.gridData = gridData
     }
   }
 }

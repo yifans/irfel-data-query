@@ -58,7 +58,7 @@ const actions = {
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        console.log('get', result)
+        console.log('get Data from AA', result)
         let dataTmp = {}
         let metaTmp = {}
         result.map(function (resultItem) {
@@ -87,6 +87,7 @@ const actions = {
 const getters = {
   allPVs: state => state.allPVs,
   selectedPVs: state => state.selectedPVs,
+  historicalData: state => state.historicalData,
   queryURLs: function (state) {
     let urlHeader = '/retrieval/data/getData.' + state.queryFormat
     let from = state.timeRange[0].toISOString()
@@ -101,7 +102,6 @@ const getters = {
     let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
     return urls
   },
-  historicalData: state => state.historicalData,
   pvTree: function (state) {
     var allPVs = state.allPVs
     var tree = {

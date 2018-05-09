@@ -5,7 +5,7 @@
         <pv-tree></pv-tree>
       </el-col>
       <el-col :span="20">
-        <!--<pv-dialog></pv-dialog>-->
+        <pv-dialog></pv-dialog>
         <el-row>
           <pv-chart></pv-chart>
         </el-row>
@@ -29,7 +29,7 @@ import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 import PVTree from '../components/PVTree'
 import PVChart from '../components/PVChart'
 import DataPicker from '../components/DatePicker'
-// import PVDialog from '../components/PVDialog'
+import PVDialog from '../components/PVDialog'
 
 export default {
   name: 'Historical',
@@ -41,8 +41,8 @@ export default {
   components: {
     'pv-tree': PVTree,
     'data-picker': DataPicker,
-    'pv-chart': PVChart
-    // 'pv-dialog': PVDialog
+    'pv-chart': PVChart,
+    'pv-dialog': PVDialog
   },
   computed: {
     ...mapGetters([
