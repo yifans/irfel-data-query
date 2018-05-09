@@ -16,9 +16,6 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters([
-    //   'historicalData'
-    // ]),
     ...mapState([
       'selectedPVs',
       'historicalData'

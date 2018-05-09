@@ -14,7 +14,7 @@
         </el-row>
         <br>
         <el-row>
-          <el-button type="primary" @click="draw">Draw Line Chart</el-button>
+          <!--<el-button type="primary" @click="draw">Draw Line Chart</el-button>-->
           <el-button type="primary" @click="statistics">Statistics Data</el-button>
           <el-button type="primary" @click="view">View Data</el-button>
           <el-button type="primary" @click="download">Download Data</el-button>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 import PVTree from '../components/PVTree'
 import PVChart from '../components/PVChart'
 import DataPicker from '../components/DatePicker'
@@ -45,11 +45,9 @@ export default {
     'pv-dialog': PVDialog
   },
   computed: {
-    ...mapGetters([
-      'allPVs',
-      'historicalData'
-    ]),
     ...mapState([
+      'allPVs',
+      'historicalData',
       'selectedPVs',
       'timeRange'
     ])
@@ -70,14 +68,10 @@ export default {
     ...mapMutations([
       'setDialogTableVisible'
     ]),
-    draw: function () {
-      this.getHistoricalData()
-    },
     statistics: function () {
       console.log('statistics')
     },
     view: function () {
-      console.log('view data')
       this.setDialogTableVisible({
         visible: true
       })
@@ -90,7 +84,8 @@ export default {
         return urlHeader + 'pv=' + pv + '&from=' + from + '&to=' + to
       })
       for (let i in urls) {
-        window.open(urls[i])
+        // window.open(urls[i])
+        console.log(urls[i])
       }
     }
   },

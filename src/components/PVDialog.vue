@@ -1,9 +1,7 @@
 <template>
   <div class="pv-dialog">
     <el-dialog title="Historical Data" :visible.sync="dialogTableVisible" @close="onClose">
-      {{pageSize}}
-      {{currentPage}}
-      <el-table :data="gridData">
+      <el-table :data="gridData" stripe center>
         <el-table-column
           v-for="pv in selectedPVs"
           :key='pv'
@@ -55,11 +53,9 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
-      // console.log(`每页 ${val} 条`);
     },
     handleCurrentChange (val) {
       this.currentPage = val
-      // console.log(`当前页: ${val}`);
     },
     setDataLengthMax: function () {
       let rawData = this.historicalData
@@ -69,14 +65,12 @@ export default {
       this.dataLengthMax = dataLengthMax
     },
     setGridData: function () {
-      console.log('historical Data', this.historicalData)
       let rawData = this.historicalData
       let pvs = this.selectedPVs
       let gridData = []
       let start = (this.currentPage - 1) * this.pageSize
       let end = start + this.pageSize
-      console.log('start and pageSize', start, end)
-      for (let i = start; i < start + this.pageSize; i++) {
+      for (let i = start; i < end; i++) {
         let obj = {}
         for (let pvIndex in pvs) {
           let pvName = pvs[pvIndex]
@@ -94,7 +88,6 @@ export default {
         }
         gridData.push(obj)
       }
-      console.log('grid after for each', gridData)
       this.gridData = gridData
     }
   },

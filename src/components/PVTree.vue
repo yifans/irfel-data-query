@@ -5,13 +5,15 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapState, mapGetters, mapMutations} from 'vuex'
 
 export default {
   name: 'PVTree',
   computed: {
     ...mapGetters([
-      'pvTree',
+      'pvTree'
+    ]),
+    ...mapState([
       'selectedPVs'
     ])
   },

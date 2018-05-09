@@ -67,7 +67,6 @@ const actions = {
           let data = resultItem.data[0].data
           dataTmp[pvName] = data
           metaTmp[pvName] = meta
-          // console.log('item', pvName, meta, data)
         })
         context.commit({
           type: 'setHistoricalData',
@@ -85,9 +84,9 @@ const actions = {
 }
 
 const getters = {
-  allPVs: state => state.allPVs,
-  selectedPVs: state => state.selectedPVs,
-  historicalData: state => state.historicalData,
+  // allPVs: state => state.allPVs,
+  // selectedPVs: state => state.selectedPVs,
+  // historicalData: state => state.historicalData,
   queryURLs: function (state) {
     let urlHeader = '/retrieval/data/getData.' + state.queryFormat
     let from = state.timeRange[0].toISOString()
@@ -136,7 +135,6 @@ const getters = {
           }
 
           pointer['children'].push(obj)
-          // console.log(tree)
           let childrenCount = pointer['children'].length
           pointer = pointer['children'][childrenCount - 1]
         }
