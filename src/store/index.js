@@ -11,7 +11,8 @@ const state = {
   metaData: {},
   queryFormat: 'qw',
   downloadFormat: 'txt',
-  dialogTableVisible: false
+  dialogTableVisible: false,
+  dialogDownloadVisible: false
 }
 
 const mutations = {
@@ -32,6 +33,9 @@ const mutations = {
   },
   setDialogTableVisible (state, payload) {
     state.dialogTableVisible = payload.visible
+  },
+  setDialogDownloadVisible (state, payload) {
+    state.dialogDownloadVisible = payload.visible
   }
 }
 
@@ -96,6 +100,7 @@ const getters = {
   },
   downloadURLs: function (state) {
     let urlHeader = '/retrieval/data/getData.' + state.downloadFormat
+    if (state.timeRange.length === 0) return []
     let from = state.timeRange[0].toISOString()
     let to = state.timeRange[1].toISOString()
     let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)

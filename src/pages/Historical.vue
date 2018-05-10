@@ -6,6 +6,7 @@
       </el-col>
       <el-col :span="20">
         <pv-dialog></pv-dialog>
+        <download-dialog></download-dialog>
         <el-row>
           <pv-chart></pv-chart>
         </el-row>
@@ -30,6 +31,7 @@ import PVTree from '../components/PVTree'
 import PVChart from '../components/PVChart'
 import DataPicker from '../components/DatePicker'
 import PVDialog from '../components/PVDialog'
+import DownloadDialog from '../components/DownloadDialog'
 
 export default {
   name: 'Historical',
@@ -42,7 +44,8 @@ export default {
     'pv-tree': PVTree,
     'data-picker': DataPicker,
     'pv-chart': PVChart,
-    'pv-dialog': PVDialog
+    'pv-dialog': PVDialog,
+    'download-dialog': DownloadDialog
   },
   computed: {
     ...mapState([
@@ -66,7 +69,8 @@ export default {
       'getHistoricalData'
     ]),
     ...mapMutations([
-      'setDialogTableVisible'
+      'setDialogTableVisible',
+      'setDialogDownloadVisible'
     ]),
     draw: function () {
       this.getHistoricalData()
@@ -80,16 +84,10 @@ export default {
       })
     },
     download: function () {
-      let urlHeader = '/retrieval/data/getData.csv?'
-      let from = this.timeRange[0].toISOString()
-      let to = this.timeRange[1].toISOString()
-      let urls = this.selectedPVs.map(function (pv) {
-        return urlHeader + 'pv=' + pv + '&from=' + from + '&to=' + to
+      console.log('download')
+      this.setDialogDownloadVisible({
+        visible: true
       })
-      for (let i in urls) {
-        // window.open(urls[i])
-        console.log(urls[i])
-      }
     }
   },
   mounted: function () {
