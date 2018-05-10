@@ -15,7 +15,7 @@
         :page-size=pageSize
         :page-sizes="[20, 50, 100, 200]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total=dataLengthMax>
+        :total=itemTotal>
       </el-pagination>
     </el-dialog>
   </div>
@@ -40,6 +40,10 @@ export default {
           visible: false
         })
       }
+    },
+    itemTotal: function () {
+      if (this.dataLengthMax <= 0) return 0
+      return this.dataLengthMax
     }
   },
   methods: {

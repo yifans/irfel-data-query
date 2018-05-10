@@ -78,8 +78,6 @@ export default {
         let dataList = rawData[pv].map(function (dataItem) {
           return dataItem.val
         })
-        // console.log(dataList)
-        // window.list = dataList
         let max = Math.max(...dataList)
         let min = Math.min(...dataList)
         let mean = _this.getMean(dataList)
