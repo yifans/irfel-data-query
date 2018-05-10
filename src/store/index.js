@@ -66,13 +66,21 @@ const actions = {
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        console.log('get Data from AA', result)
+        // console.log('get Data from AA', result)
         let dataTmp = {}
         let metaTmp = {}
         result.map(function (resultItem) {
           let pvName = resultItem.data[0].meta.name
           let meta = resultItem.data[0].meta
           let data = resultItem.data[0].data
+          // data format
+          let point = 4
+          data.map(function (item) {
+            if (item.val > Math.pow(10, -point)) {
+              item.val = Number(item.val.toFixed(point))
+            }
+          })
+          // console.log('data', data)
           dataTmp[pvName] = data
           metaTmp[pvName] = meta
         })

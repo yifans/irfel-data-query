@@ -58,14 +58,14 @@ export default {
       'timeRange'
     ])
   },
-  // watch: {
-  //   selectedPVs: function () {
-  //     this.getHistoricalData()
-  //   },
-  //   timeRange: function () {
-  //     this.getHistoricalData()
-  //   }
-  // },
+  watch: {
+    selectedPVs: function () {
+      this.getHistoricalData()
+    },
+    timeRange: function () {
+      this.getHistoricalData()
+    }
+  },
   methods: {
     ...mapActions([
       'getAllPVs',

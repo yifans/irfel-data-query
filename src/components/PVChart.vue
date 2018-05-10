@@ -60,9 +60,9 @@ export default {
         yAxis: this.selectedPVs.map(function (pv) {
           return {
             id: pv,
-            opposite: false,
+            enabled: false,
             title: {
-              text: pv
+              // text: pv
             }
           }
         })

@@ -85,9 +85,10 @@ export default {
           }
           let newDate = new Date()
           newDate.setTime(item.millis)
-          let time = newDate.toISOString()
+          let time = newDate.toLocaleString()
+          // let time = newDate.toISOString()
           let value = item.val
-          item = time + ' ' + value
+          item = time + ' -- ' + value
           obj[pvName] = item
         }
         gridData.push(obj)
