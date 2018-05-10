@@ -106,7 +106,7 @@ export default {
       let chartData = []
       this.axios.all(promiseArray)
         .then(function (result) {
-          console.log('get Data from AA', result)
+          // console.log('get Data from AA', result)
           result.map(function (resultItem) {
             // let name = resultItem.data[0].meta.name
             chartData.push(resultItem.data[0])

@@ -1,6 +1,6 @@
 <template>
   <div class="pv-dialog">
-    <el-dialog title="Historical Data" :visible.sync="dialogTableVisible" @close="onClose">
+    <el-dialog :visible.sync="dialogTableVisible" @close="onClose" width="70%" center>
       <el-table :data="gridData" stripe center>
         <el-table-column
           v-for="pv in selectedPVs"

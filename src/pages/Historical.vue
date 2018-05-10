@@ -7,6 +7,7 @@
       <el-col :span="20">
         <pv-dialog></pv-dialog>
         <download-dialog></download-dialog>
+        <statistics-dialog></statistics-dialog>
         <el-row>
           <pv-chart></pv-chart>
         </el-row>
@@ -15,10 +16,10 @@
         </el-row>
         <br>
         <el-row>
-          <el-button type="primary" @click="draw">Draw Line Chart</el-button>
-          <el-button type="primary" @click="statistics">Statistics Data</el-button>
-          <el-button type="primary" @click="view">View Data</el-button>
-          <el-button type="primary" @click="download">Download Data</el-button>
+              <el-button type="primary" @click="draw">Draw Line Chart</el-button>
+              <el-button type="primary" @click="statistics">Statistics Data</el-button>
+              <el-button type="primary" @click="view">View Data</el-button>
+              <el-button type="primary" @click="download">Download Data</el-button>
         </el-row>
       </el-col>
     </el-row>
@@ -32,6 +33,7 @@ import PVChart from '../components/PVChart'
 import DataPicker from '../components/DatePicker'
 import PVDialog from '../components/PVDialog'
 import DownloadDialog from '../components/DownloadDialog'
+import StatisticsDialog from '../components/StatisticsDialog'
 
 export default {
   name: 'Historical',
@@ -45,7 +47,8 @@ export default {
     'data-picker': DataPicker,
     'pv-chart': PVChart,
     'pv-dialog': PVDialog,
-    'download-dialog': DownloadDialog
+    'download-dialog': DownloadDialog,
+    'statistics-dialog': StatisticsDialog
   },
   computed: {
     ...mapState([
@@ -70,13 +73,16 @@ export default {
     ]),
     ...mapMutations([
       'setDialogTableVisible',
-      'setDialogDownloadVisible'
+      'setDialogDownloadVisible',
+      'setDialogStatisticsVisible'
     ]),
     draw: function () {
       this.getHistoricalData()
     },
     statistics: function () {
-      console.log('statistics')
+      this.setDialogStatisticsVisible({
+        visible: true
+      })
     },
     view: function () {
       this.setDialogTableVisible({

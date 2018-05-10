@@ -10,9 +10,10 @@ const state = {
   historicalData: {},
   metaData: {},
   queryFormat: 'qw',
-  downloadFormat: 'txt',
+  downloadFormat: 'csv',
   dialogTableVisible: false,
-  dialogDownloadVisible: false
+  dialogDownloadVisible: false,
+  dialogStatisticsVisible: false
 }
 
 const mutations = {
@@ -36,6 +37,9 @@ const mutations = {
   },
   setDialogDownloadVisible (state, payload) {
     state.dialogDownloadVisible = payload.visible
+  },
+  setDialogStatisticsVisible (state, payload) {
+    state.dialogStatisticsVisible = payload.visible
   }
 }
 

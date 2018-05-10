@@ -1,14 +1,14 @@
 <template>
   <div class="download-dialog">
     <el-dialog title="Download Data" :visible.sync="dialogDownloadVisible" @close="onClose">
-      <el-row>
-        <a v-for="url in urls"
-           :key="url.pvName"
-           v-bind:href="url.url"
-           v-bind:download="url.pvName">
+      <a v-for="url in urls"
+         :key="url.pvName"
+         v-bind:href="url.url"
+         v-bind:download="url.pvName">
+        <p align="center">
           <el-button type="primary">{{url.pvName}}</el-button>
-        </a>
-      </el-row>
+        </p>
+      </a>
     </el-dialog>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
       let urls = []
       for (let i in this.downloadURLs) {
         urls.push({
-          pvName: this.selectedPVs[i],
+          pvName: this.selectedPVs[i] + '.' + this.downloadFormat,
           url: this.downloadURLs[i]
         })
       }
