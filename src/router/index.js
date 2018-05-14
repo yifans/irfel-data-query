@@ -19,6 +19,7 @@ export default new Router({
     },
     {
       path: '/',
+      redirect: '/status',
       name: 'Home',
       component: Home,
       children: [

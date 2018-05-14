@@ -62,6 +62,7 @@ const actions = {
       })
   },
   getHistoricalData (context) {
+    console.log('query urls', context.getters.queryURLs)
     var promiseArray = context.getters.queryURLs
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
