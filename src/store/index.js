@@ -7,6 +7,7 @@ Vue.use(Vuex)
 const state = {
   allPVs: [],
   selectedPVs: new Set(),
+  axisPVs: new Set(),
   timeRange: [],
   historicalData: [],
   queryFormat: 'qw',
@@ -14,6 +15,7 @@ const state = {
   dialogTableVisible: false,
   dialogDownloadVisible: false,
   dialogStatisticsVisible: false,
+  dialogAxisVisible: false,
   logarithmic: false
 }
 
@@ -23,6 +25,9 @@ const mutations = {
   },
   setSelectedPVs (state, payload) {
     state.selectedPVs = payload.pvs
+  },
+  setAxisPVs (state, payload) {
+    state.axisPVs = payload.pvs
   },
   setTimeRange (state, payload) {
     state.timeRange = payload.timeRange
@@ -38,6 +43,9 @@ const mutations = {
   },
   setDialogStatisticsVisible (state, payload) {
     state.dialogStatisticsVisible = payload.visible
+  },
+  setDialogAxisVisible (state, payload) {
+    state.dialogAxisVisible = payload.visible
   },
   setLogarithmic (state, payload) {
     state.logarithmic = payload.value
@@ -63,6 +71,7 @@ const actions = {
       })
   },
   getHistoricalData (context) {
+    // make urls
     // console.log('query urls', context.getters.queryURLs)
     let urlHeader = '/retrieval/data/getData.' + state.queryFormat
     let from = state.timeRange[0].toISOString()
@@ -73,6 +82,7 @@ const actions = {
     }
     var promiseArray = queryURLs
       .map(url => Vue.axios.get(url))
+    // get data frm AA
     Vue.axios.all(promiseArray)
       .then(function (result) {
         // console.log('get Data from AA', result)
@@ -108,28 +118,29 @@ const getters = {
   pvChartOptions (state) {
     let options = config.chartDefaultConfig
     let isLogarithmic = state.logarithmic
+    let axisPVs = state.axisPVs
     let rawData = state.historicalData
     if (JSON.stringify(state.historicalData) === '{}') return options
     options.yAxis = rawData.map(function (dataItem, index, arr) {
       let obj = {
         id: dataItem.pvName,
         visible: false,
+        opposite: false,
         title: {
           text: dataItem.pvName + ' (' + dataItem.EGU + ')'
         }
       }
+      // 如果在axisPVs内，就显示
+      if (axisPVs.has(dataItem.pvName)) {
+        obj.visible = true
+      }
+      // 如果是参考pv，放到右侧
       if (dataItem.pvName === config.referencePV) {
         obj.opposite = true
-        obj.visible = true
-      } else {
-        if (isLogarithmic === true) {
-          obj.type = 'logarithmic'
-        }
-        if ((arr[0].pvName === config.referencePV && index === 1) || (arr[0].pvName !== config.referencePV && index === 0)) {
-          // 只有选择的第一个变量轴可见
-          obj.visible = true
-        }
-        obj.opposite = false
+      }
+      // 如果设定对数坐标，且不是参考pv，设置为对数
+      if (isLogarithmic === true && (dataItem.pvName !== config.referencePV)) {
+        obj.type = 'logarithmic'
       }
       return obj
     })

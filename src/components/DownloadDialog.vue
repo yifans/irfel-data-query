@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'DownloadDialog',
   data () {
@@ -27,9 +27,6 @@ export default {
       'selectedPVs',
       'downloadFormat',
       'timeRange'
-    ]),
-    ...mapGetters([
-      'downloadURLs'
     ]),
     dialogDownloadVisible: {
       get: function () {
