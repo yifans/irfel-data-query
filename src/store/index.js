@@ -68,7 +68,7 @@ const actions = {
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        console.log('get Data from AA', result)
+        // console.log('get Data from AA', result)
         let dataTmp = []
         result.map(function (resultItem) {
           let obj = {}
@@ -86,7 +86,6 @@ const actions = {
           })
           dataTmp.push(obj)
         })
-        console.log('dataTmp', dataTmp)
         context.commit({
           type: 'setHistoricalData',
           data: dataTmp
@@ -115,15 +114,11 @@ const getters = {
     return urls
   },
   pvChartOptions (state) {
-    console.log('first line set chart options')
-
     let options = config.chartDefaultConfig
     let isLogarithmic = state.logarithmic
     let rawData = state.historicalData
     if (JSON.stringify(state.historicalData) === '{}') return options
-    // console.log('set options')
     options.yAxis = rawData.map(function (dataItem, index, arr) {
-      console.log('pv and index', dataItem.pvName, index)
       let obj = {
         id: dataItem.pvName,
         visible: false,
@@ -131,17 +126,15 @@ const getters = {
           text: dataItem.pvName + ' (' + dataItem.EGU + ')'
         }
       }
-      if (dataItem.pvName === 'RNG:BEAM:CURR') {
+      if (dataItem.pvName === config.referencePV) {
         obj.opposite = true
         obj.visible = true
       } else {
         if (isLogarithmic === true) {
-          console.log(state.logarithmic)
           obj.type = 'logarithmic'
         }
-        if ((arr[0].pvName === 'RNG:BEAM:CURR' && index === 1) || (arr[0].pvName !== 'RNG:BEAM:CURR' && index === 0)) {
+        if ((arr[0].pvName === config.referencePV && index === 1) || (arr[0].pvName !== config.referencePV && index === 0)) {
           // 只有选择的第一个变量轴可见
-          console.log('visible')
           obj.visible = true
         }
         obj.opposite = false
@@ -155,7 +148,6 @@ const getters = {
         data: dataItem.data.map(data => [data.millis, data.val])
       }
     })
-    console.log('options', options)
     return options
   },
   pvTree: function (state) {
