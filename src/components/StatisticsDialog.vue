@@ -20,7 +20,6 @@ export default {
   name: 'StatisticsDialog',
   computed: {
     ...mapState([
-      'selectedPVs',
       'historicalData',
       'dialogStatisticsVisible'
     ]),
@@ -72,12 +71,12 @@ export default {
     setGridData: function () {
       let _this = this
       let rawData = this.historicalData
-      let pvs = this.selectedPVs
       let gridData = []
-      pvs.map(function (pv) {
-        let dataList = rawData[pv].map(function (dataItem) {
-          return dataItem.val
+      rawData.map(function (dataItem) {
+        let dataList = dataItem.data.map(function (data) {
+          return data.val
         })
+        let pv = dataItem.pvName
         let max = Math.max(...dataList)
         let min = Math.min(...dataList)
         let mean = _this.getMean(dataList)

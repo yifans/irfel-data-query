@@ -23,8 +23,6 @@
               <el-button type="primary" @click="download">Download Data</el-button>
               <el-button type="primary" @click="axis">Set Axes</el-button>
         </el-row>
-        {{selectedPVs}}
-        {{axisPVs}}
         <br>
         <el-row type="flex" justify="center">
           <el-form :inline="true">
