@@ -67,7 +67,7 @@ const actions = {
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        // console.log('get Data from AA', result)
+        console.log('get Data from AA', result)
         let dataTmp = {}
         let metaTmp = {}
         result.map(function (resultItem) {
@@ -118,6 +118,63 @@ const getters = {
     let to = state.timeRange[1].toISOString()
     let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
     return urls
+  },
+  pvChartOptions (state) {
+    console.log('first line set chart options')
+    var chartDefault = {
+      chart: {
+        zoomType: 'x',
+        resetZoomButton: {
+          position: {
+            // align: 'right', // by default
+            // verticalAlign: 'top', // by default
+            x: 0,
+            y: -30
+          },
+          relativeTo: 'chart'
+        }
+      },
+      title: {
+        text: ''
+      },
+      credits: {
+        // enabled:true,    // 默认值，如果想去掉版权信息，设置为false即可
+        text: 'NSRL@USTC', // 显示的文字
+        href: 'http://www.nsrl.ustc.edu.cn'
+      },
+      tooltip: {
+        split: false,
+        shared: true
+      },
+      rangeSelector: false,
+      legend: {
+        enabled: true,
+        verticalAlign: 'bottom',
+        // layout: 'vertical',
+        align: 'middle'
+      }
+    }
+    let options = chartDefault
+    let rawData = state.historicalData
+    console.log('set options')
+    options.yAxis = state.selectedPVs.map(function (pv) {
+      return {
+        id: pv,
+        opposite: true,
+        visible: false,
+        title: {
+          text: pv
+        }
+      }
+    })
+    options.series = state.selectedPVs.map(function (pv) {
+      return {
+        yAxis: pv,
+        name: pv,
+        data: rawData[pv].map(dataItem => [dataItem.millis, dataItem.val])
+      }
+    })
+    return options
   },
   pvTree: function (state) {
     var allPVs = state.allPVs
