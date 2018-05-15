@@ -20,6 +20,7 @@
               <el-button type="primary" @click="statistics">Statistics Data</el-button>
               <el-button type="primary" @click="view">View Data</el-button>
               <el-button type="primary" @click="download">Download Data</el-button>
+              <el-button type="primary" @click="setlogarithmic">Logarithmic</el-button>
         </el-row>
       </el-col>
     </el-row>
@@ -55,7 +56,8 @@ export default {
       'allPVs',
       'historicalData',
       'selectedPVs',
-      'timeRange'
+      'timeRange',
+      'logarithmic'
     ])
   },
   // watch: {
@@ -74,7 +76,8 @@ export default {
     ...mapMutations([
       'setDialogTableVisible',
       'setDialogDownloadVisible',
-      'setDialogStatisticsVisible'
+      'setDialogStatisticsVisible',
+      'setLogarithmic'
     ]),
     draw: function () {
       this.getHistoricalData()
@@ -90,9 +93,14 @@ export default {
       })
     },
     download: function () {
-      console.log('download')
       this.setDialogDownloadVisible({
         visible: true
+      })
+    },
+    setlogarithmic: function () {
+      let value = !this.logarithmic
+      this.setLogarithmic({
+        value
       })
     }
   },

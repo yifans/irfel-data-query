@@ -82,7 +82,7 @@ export default {
             let parameterName = resultItem.data[0].meta.name
             let pvData = resultItem.data[0].data
             let value = pvData[pvData.length - 1].val
-            value = Math.round(value * 100) / 100
+            value = Math.round(value * 1000) / 1000
             gridData.push({
               parameter: parameterName,
               value: value

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import config from './config'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const state = {
   downloadFormat: 'csv',
   dialogTableVisible: false,
   dialogDownloadVisible: false,
-  dialogStatisticsVisible: false
+  dialogStatisticsVisible: false,
+  logarithmic: false
 }
 
 const mutations = {
@@ -40,6 +42,9 @@ const mutations = {
   },
   setDialogStatisticsVisible (state, payload) {
     state.dialogStatisticsVisible = payload.visible
+  },
+  setLogarithmic (state, payload) {
+    state.logarithmic = payload.value
   }
 }
 
@@ -62,12 +67,12 @@ const actions = {
       })
   },
   getHistoricalData (context) {
-    console.log('query urls', context.getters.queryURLs)
+    // console.log('query urls', context.getters.queryURLs)
     var promiseArray = context.getters.queryURLs
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        console.log('get Data from AA', result)
+        // console.log('get Data from AA', result)
         let dataTmp = {}
         let metaTmp = {}
         result.map(function (resultItem) {
@@ -101,9 +106,6 @@ const actions = {
 }
 
 const getters = {
-  // allPVs: state => state.allPVs,
-  // selectedPVs: state => state.selectedPVs,
-  // historicalData: state => state.historicalData,
   queryURLs: function (state) {
     let urlHeader = '/retrieval/data/getData.' + state.queryFormat
     let from = state.timeRange[0].toISOString()
@@ -121,51 +123,37 @@ const getters = {
   },
   pvChartOptions (state) {
     console.log('first line set chart options')
-    var chartDefault = {
-      chart: {
-        zoomType: 'x',
-        resetZoomButton: {
-          position: {
-            // align: 'right', // by default
-            // verticalAlign: 'top', // by default
-            x: 0,
-            y: -30
-          },
-          relativeTo: 'chart'
-        }
-      },
-      title: {
-        text: ''
-      },
-      credits: {
-        // enabled:true,    // 默认值，如果想去掉版权信息，设置为false即可
-        text: 'NSRL@USTC', // 显示的文字
-        href: 'http://www.nsrl.ustc.edu.cn'
-      },
-      tooltip: {
-        split: false,
-        shared: true
-      },
-      rangeSelector: false,
-      legend: {
-        enabled: true,
-        verticalAlign: 'bottom',
-        // layout: 'vertical',
-        align: 'middle'
-      }
-    }
-    let options = chartDefault
+
+    let options = config.chartDefaultConfig
+    let isLogarithmic = state.logarithmic
     let rawData = state.historicalData
-    console.log('set options')
-    options.yAxis = state.selectedPVs.map(function (pv) {
-      return {
+    if (JSON.stringify(state.historicalData) === '{}') return options
+    // console.log('set options')
+    options.yAxis = state.selectedPVs.map(function (pv, index, arr) {
+      console.log('pv and index', pv, index)
+      let obj = {
         id: pv,
-        opposite: true,
         visible: false,
         title: {
           text: pv
         }
       }
+      if (pv === 'RNG:BEAM:CURR') {
+        obj.opposite = true
+        obj.visible = true
+      } else {
+        if (isLogarithmic === true) {
+          console.log(state.logarithmic)
+          obj.type = 'logarithmic'
+        }
+        if ((arr[0] === 'RNG:BEAM:CURR' && index === 1) || (arr[0] !== 'RNG:BEAM:CURR' && index === 0)) {
+          // 只有选择的第一个变量轴可见
+          console.log('visible')
+          obj.visible = true
+        }
+        obj.opposite = false
+      }
+      return obj
     })
     options.series = state.selectedPVs.map(function (pv) {
       return {
@@ -174,6 +162,7 @@ const getters = {
         data: rawData[pv].map(dataItem => [dataItem.millis, dataItem.val])
       }
     })
+    console.log('options', options)
     return options
   },
   pvTree: function (state) {
