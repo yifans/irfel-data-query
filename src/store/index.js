@@ -8,8 +8,7 @@ const state = {
   allPVs: [],
   selectedPVs: [],
   timeRange: [],
-  historicalData: {},
-  metaData: {},
+  historicalData: [],
   queryFormat: 'qw',
   downloadFormat: 'csv',
   dialogTableVisible: false,
@@ -30,9 +29,6 @@ const mutations = {
   },
   setHistoricalData (state, payload) {
     state.historicalData = payload.data
-  },
-  setMetaData (state, payload) {
-    state.metaData = payload.meta
   },
   setDialogTableVisible (state, payload) {
     state.dialogTableVisible = payload.visible
@@ -72,31 +68,28 @@ const actions = {
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
-        // console.log('get Data from AA', result)
-        let dataTmp = {}
-        let metaTmp = {}
+        console.log('get Data from AA', result)
+        let dataTmp = []
         result.map(function (resultItem) {
-          let pvName = resultItem.data[0].meta.name
-          let meta = resultItem.data[0].meta
-          let data = resultItem.data[0].data
+          let obj = {}
+          obj.pvName = resultItem.data[0].meta.name
+          obj.EGU = resultItem.data[0].meta.EGU
+          obj.PREC = resultItem.data[0].meta.PREC
+          obj.waveform = resultItem.data[0].meta.waveform
+          obj.data = resultItem.data[0].data
           // data format
           let point = 4
-          data.map(function (item) {
+          obj.data.map(function (item) {
             if (item.val > Math.pow(10, -point)) {
               item.val = Number(item.val.toFixed(point))
             }
           })
-          // console.log('data', data)
-          dataTmp[pvName] = data
-          metaTmp[pvName] = meta
+          dataTmp.push(obj)
         })
+        console.log('dataTmp', dataTmp)
         context.commit({
           type: 'setHistoricalData',
           data: dataTmp
-        })
-        context.commit({
-          type: 'setMetaData',
-          data: metaTmp
         })
       })
       .catch(function (error) {
@@ -129,16 +122,16 @@ const getters = {
     let rawData = state.historicalData
     if (JSON.stringify(state.historicalData) === '{}') return options
     // console.log('set options')
-    options.yAxis = state.selectedPVs.map(function (pv, index, arr) {
-      console.log('pv and index', pv, index)
+    options.yAxis = rawData.map(function (dataItem, index, arr) {
+      console.log('pv and index', dataItem.pvName, index)
       let obj = {
-        id: pv,
+        id: dataItem.pvName,
         visible: false,
         title: {
-          text: pv
+          text: dataItem.pvName + ' (' + dataItem.EGU + ')'
         }
       }
-      if (pv === 'RNG:BEAM:CURR') {
+      if (dataItem.pvName === 'RNG:BEAM:CURR') {
         obj.opposite = true
         obj.visible = true
       } else {
@@ -146,7 +139,7 @@ const getters = {
           console.log(state.logarithmic)
           obj.type = 'logarithmic'
         }
-        if ((arr[0] === 'RNG:BEAM:CURR' && index === 1) || (arr[0] !== 'RNG:BEAM:CURR' && index === 0)) {
+        if ((arr[0].pvName === 'RNG:BEAM:CURR' && index === 1) || (arr[0].pvName !== 'RNG:BEAM:CURR' && index === 0)) {
           // 只有选择的第一个变量轴可见
           console.log('visible')
           obj.visible = true
@@ -155,11 +148,11 @@ const getters = {
       }
       return obj
     })
-    options.series = state.selectedPVs.map(function (pv) {
+    options.series = rawData.map(function (dataItem) {
       return {
-        yAxis: pv,
-        name: pv,
-        data: rawData[pv].map(dataItem => [dataItem.millis, dataItem.val])
+        yAxis: dataItem.pvName,
+        name: dataItem.pvName,
+        data: dataItem.data.map(data => [data.millis, data.val])
       }
     })
     console.log('options', options)
