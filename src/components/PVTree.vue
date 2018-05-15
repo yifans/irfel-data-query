@@ -5,16 +5,13 @@
 </template>
 
 <script>
-import {mapState, mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 
 export default {
   name: 'PVTree',
   computed: {
     ...mapGetters([
       'pvTree'
-    ]),
-    ...mapState([
-      'selectedPVs'
     ])
   },
   methods: {
@@ -23,9 +20,10 @@ export default {
     ]),
     checkNode: function () {
       let nodes = this.$refs.pvtree.getCheckedNodes(true)
-      let pvs = []
+      let pvs = new Set()
       for (let i in nodes) {
-        pvs.push(nodes[i]['pvName'])
+        // pvs.push(nodes[i]['pvName'])
+        pvs.add(nodes[i]['pvName'])
       }
       this.setSelectedPVs({
         pvs

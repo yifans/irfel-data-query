@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 const state = {
   allPVs: [],
-  selectedPVs: [],
+  selectedPVs: new Set(),
   timeRange: [],
   historicalData: [],
   queryFormat: 'qw',
@@ -64,7 +64,14 @@ const actions = {
   },
   getHistoricalData (context) {
     // console.log('query urls', context.getters.queryURLs)
-    var promiseArray = context.getters.queryURLs
+    let urlHeader = '/retrieval/data/getData.' + state.queryFormat
+    let from = state.timeRange[0].toISOString()
+    let to = state.timeRange[1].toISOString()
+    let queryURLs = []
+    for (let pv of state.selectedPVs) {
+      queryURLs.push(urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
+    }
+    var promiseArray = queryURLs
       .map(url => Vue.axios.get(url))
     Vue.axios.all(promiseArray)
       .then(function (result) {
@@ -98,21 +105,6 @@ const actions = {
 }
 
 const getters = {
-  queryURLs: function (state) {
-    let urlHeader = '/retrieval/data/getData.' + state.queryFormat
-    let from = state.timeRange[0].toISOString()
-    let to = state.timeRange[1].toISOString()
-    let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
-    return urls
-  },
-  downloadURLs: function (state) {
-    let urlHeader = '/retrieval/data/getData.' + state.downloadFormat
-    if (state.timeRange.length === 0) return []
-    let from = state.timeRange[0].toISOString()
-    let to = state.timeRange[1].toISOString()
-    let urls = state.selectedPVs.map(pv => urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to)
-    return urls
-  },
   pvChartOptions (state) {
     let options = config.chartDefaultConfig
     let isLogarithmic = state.logarithmic

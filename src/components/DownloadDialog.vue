@@ -17,10 +17,16 @@
 import { mapState, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'DownloadDialog',
+  data () {
+    return {
+      urls: []
+    }
+  },
   computed: {
     ...mapState([
       'selectedPVs',
-      'downloadFormat'
+      'downloadFormat',
+      'timeRange'
     ]),
     ...mapGetters([
       'downloadURLs'
@@ -34,16 +40,13 @@ export default {
           visible: false
         })
       }
-    },
-    urls: function () {
-      let urls = []
-      for (let i in this.downloadURLs) {
-        urls.push({
-          pvName: this.selectedPVs[i] + '.' + this.downloadFormat,
-          url: this.downloadURLs[i]
-        })
+    }
+  },
+  watch: {
+    dialogDownloadVisible: function () {
+      if (this.dialogDownloadVisible === true) {
+        this.urls = this.makeURL()
       }
-      return urls
     }
   },
   methods: {
@@ -54,6 +57,20 @@ export default {
       this.setDialogDownloadVisible({
         visible: false
       })
+    },
+    makeURL: function () {
+      let urlHeader = '/retrieval/data/getData.' + this.downloadFormat
+      if (this.timeRange.length === 0) return []
+      let from = this.timeRange[0].toISOString()
+      let to = this.timeRange[1].toISOString()
+      let urls = []
+      for (let pv of this.selectedPVs) {
+        urls.push({
+          pvName: pv + '.' + this.downloadFormat,
+          url: urlHeader + '?pv=' + pv + '&from=' + from + '&to=' + to
+        })
+      }
+      return urls
     }
   }
 }

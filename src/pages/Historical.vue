@@ -11,16 +11,27 @@
         <el-row>
           <pv-chart></pv-chart>
         </el-row>
-        <el-row>
+        <el-row type="flex" justify="center">
           <data-picker></data-picker>
         </el-row>
         <br>
-        <el-row>
+        <el-row type="flex" justify="center">
               <el-button type="primary" @click="draw">Draw Line Chart</el-button>
               <el-button type="primary" @click="statistics">Statistics Data</el-button>
               <el-button type="primary" @click="view">View Data</el-button>
               <el-button type="primary" @click="download">Download Data</el-button>
-              <el-button type="primary" @click="setlogarithmic">Logarithmic</el-button>
+        </el-row>
+        {{selectedPVs}}
+        <br>
+        <el-row type="flex" justify="center">
+          <el-form :inline="true">
+            <el-form-item label="Logarithmic">
+              <el-switch v-model="logarithmicAxis"></el-switch>
+            </el-form-item>
+            <el-form-item label="Beam Current">
+              <el-switch v-model="showReferencePV"></el-switch>
+            </el-form-item>
+          </el-form>
         </el-row>
       </el-col>
     </el-row>
@@ -35,12 +46,15 @@ import DataPicker from '../components/DatePicker'
 import PVDialog from '../components/PVDialog'
 import DownloadDialog from '../components/DownloadDialog'
 import StatisticsDialog from '../components/StatisticsDialog'
+import config from '../store/config'
 
 export default {
   name: 'Historical',
   data () {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      logarithmicAxis: false,
+      showReferencePV: false
     }
   },
   components: {
@@ -54,20 +68,12 @@ export default {
   computed: {
     ...mapState([
       'allPVs',
-      'historicalData',
       'selectedPVs',
+      'historicalData',
       'timeRange',
       'logarithmic'
     ])
   },
-  // watch: {
-  //   selectedPVs: function () {
-  //     this.getHistoricalData()
-  //   },
-  //   timeRange: function () {
-  //     this.getHistoricalData()
-  //   }
-  // },
   methods: {
     ...mapActions([
       'getAllPVs',
@@ -77,6 +83,7 @@ export default {
       'setDialogTableVisible',
       'setDialogDownloadVisible',
       'setDialogStatisticsVisible',
+      'setSelectedPVs',
       'setLogarithmic'
     ]),
     draw: function () {
@@ -96,16 +103,28 @@ export default {
       this.setDialogDownloadVisible({
         visible: true
       })
-    },
-    setlogarithmic: function () {
-      let value = !this.logarithmic
-      this.setLogarithmic({
-        value
-      })
     }
   },
   mounted: function () {
     this.getAllPVs()
+  },
+  watch: {
+    logarithmicAxis: function () {
+      this.setLogarithmic({
+        value: this.logarithmicAxis
+      })
+    },
+    showReferencePV: function () {
+      let selectedPVsTmp = this.selectedPVs
+      if (this.showReferencePV === false) {
+        selectedPVsTmp.delete(config.referencePV)
+      } else {
+        selectedPVsTmp.add(config.referencePV)
+      }
+      this.setSelectedPVs({
+        pvs: selectedPVsTmp
+      })
+    }
   }
 }
 </script>
