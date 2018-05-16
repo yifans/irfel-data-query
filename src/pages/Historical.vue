@@ -24,6 +24,9 @@
               <el-button type="primary" @click="axis">Set Axes</el-button>
         </el-row>
         <br>
+        <!--{{selectedPVs}}-->
+        <!--<br>-->
+        <!--{{axisPVs}}-->
         <el-row type="flex" justify="center">
           <el-form :inline="true">
             <el-form-item label="Logarithmic">

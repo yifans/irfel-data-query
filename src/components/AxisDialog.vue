@@ -5,6 +5,7 @@
           v-model="value"
           :titles="['all PVs', 'Show Axis']"
           filterable
+          @change="handleChange"
           :data="transferData"></el-transfer>
     </el-dialog>
   </div>
@@ -40,18 +41,9 @@ export default {
   watch: {
     dialogAxisVisible: function () {
       if (this.dialogAxisVisible === true) {
-        this.initValue()
         this.setTransferData()
+        this.initValue()
       }
-    },
-    value: function () {
-      let axisPVs = new Set()
-      for (let i in this.value) {
-        axisPVs.add(this.transferData[i].label)
-      }
-      this.setAxisPVs({
-        pvs: axisPVs
-      })
     }
   },
   methods: {
@@ -73,11 +65,30 @@ export default {
         }
       })
     },
+    handleChange (value) {
+      let axisPVs = new Set()
+      for (let i of value) {
+        for (let d of this.transferData) {
+          // console.log('i and d', i, d.key, d.label)
+          if (d.key === i) {
+            axisPVs.add(d.label)
+            break
+          }
+        }
+      }
+      this.setAxisPVs({
+        pvs: axisPVs
+      })
+    },
     initValue: function () {
-      let pvs = [...this.selectedPVs]
       let value = []
       for (let p of this.axisPVs) {
-        value.push(pvs.indexOf(p))
+        for (let d of this.transferData) {
+          if (d.label === p) {
+            value.push(d.key)
+            break
+          }
+        }
       }
       this.value = value
     }
