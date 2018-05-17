@@ -43,15 +43,52 @@ export default {
         label: 'Energy'
       }, {
         pvName: 'RNG:OPER:MODE',
-        label: 'Operation Mode'
+        label: 'Operation Mode',
+        isEnum: true,
+        enumLabels: [{
+          key: 0,
+          string: 'Shutdown'
+        }, {
+          key: 1,
+          string: 'Commissioning'
+        }, {
+          key: 2,
+          string: 'Maintenance'
+        }, {
+          key: 3,
+          string: 'User'
+        }, {
+          key: 4,
+          string: 'MachineStudy'
+        }, {
+          key: 5,
+          string: 'MachineStarting'
+        }]
       }, {
         pvName: 'RNG:OPER:STAT',
-        label: 'Operation Status'
+        label: 'Operation Status',
+        isEnum: true,
+        enumLabels: [{
+          key: 0,
+          string: 'Init'
+        }, {
+          key: 1,
+          string: 'Shutdown'
+        }, {
+          key: 2,
+          string: 'Injection'
+        }, {
+          key: 3,
+          string: 'Operation'
+        }, {
+          key: 4,
+          string: 'Setup'
+        }]
       }],
       chartData: [],
       tableData: [],
       timeRangeSeconds: 60 * 60 * 24,
-      pageRefreshTimeout: 10,
+      pageRefreshTimeout: 15,
       chartOptions: {}
     }
   },
@@ -79,13 +116,32 @@ export default {
         .then(function (result) {
           let gridData = []
           result.map(function (resultItem) {
-            let parameterName = resultItem.data[0].meta.name
+            let parameter = ''
+            let pvName = resultItem.data[0].meta.name
             let pvData = resultItem.data[0].data
             let value = pvData[pvData.length - 1].val
-            value = Math.round(value * 1000) / 1000
+            for (let pvItem of _this.tablePVs) {
+              // 查找对应的配置
+              if (pvItem.pvName === pvName) {
+                parameter = pvItem.label
+                if (pvItem.isEnum) {
+                  for (let enumLable of pvItem.enumLabels) {
+                    if (value === enumLable.key) {
+                      value = enumLable.string
+                      break
+                    }
+                  }
+                } else {
+                  value = Math.round(value * 1000) / 1000
+                  let egu = resultItem.data[0].meta.EGU
+                  value = value + ' ' + egu
+                }
+                break
+              }
+            }
             gridData.push({
-              parameter: parameterName,
-              value: value
+              parameter,
+              value
             })
           })
           _this.tableData = gridData
