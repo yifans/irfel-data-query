@@ -1,18 +1,30 @@
 <template>
   <div class="tree">
-    <el-tree ref='pvtree' :data="pvTree" show-checkbox @check="checkNode"></el-tree>
+    <el-tree ref='pvtree'
+             :data="pvTree"
+             show-checkbox
+             node-key="pvName"
+             :default-checked-keys="defaultCheckedKeys"
+             @check="checkNode"></el-tree>
   </div>
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapState, mapGetters, mapMutations} from 'vuex'
 
 export default {
   name: 'PVTree',
   computed: {
     ...mapGetters([
       'pvTree'
-    ])
+    ]),
+    ...mapState([
+      'selectedPVs'
+    ]),
+    defaultCheckedKeys: function () {
+      let keys = [...this.selectedPVs]
+      return keys
+    }
   },
   methods: {
     ...mapMutations([
