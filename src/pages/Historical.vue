@@ -139,7 +139,7 @@ export default {
       })
     }
   },
-  mounted: function () {
+  created: function () {
     this.getAllPVs()
   },
   watch: {
